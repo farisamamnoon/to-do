@@ -10,11 +10,13 @@ const getTasksForToday = (req, res) => {
   }
 };
 
-const addTask = (req, res) => {
+const addTask = async (req, res) => {
   try {
-    const { title, description, target_date, list } = req.body;
+    console.log(req.body);
+    const { title, description, target_date, list, subtasks } = req.body;
     const sql = `INSERT INTO tasks (title, description, target_date, list) VALUES (?, ?, ?, ?)`;
-    const result = db.query(sql, [title, description, target_date, list]);
+    const result = await db.query(sql, [title, description, target_date, list]);
+    console.log(result);
     return res.status(200).json({
       success: true,
       message: "Task created",
@@ -28,5 +30,7 @@ const addTask = (req, res) => {
   }
 };
 
-module.exports = getTasksForToday;
-module.exports = addTask;
+module.exports = {
+  addTask,
+  getTasksForToday,
+};

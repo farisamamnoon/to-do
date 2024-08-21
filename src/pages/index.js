@@ -1,4 +1,5 @@
-import { Outlet, useLocation, useNavigate } from "react-router";
+import { Outlet } from "react-router";
+import { useLoaderData } from "react-router-dom";
 import { Navigation } from "../components/navigation";
 // import { IoMdAdd } from "react-icons/io";
 // import "../index.css";
@@ -6,6 +7,7 @@ import { Navigation } from "../components/navigation";
 export function Dashboard() {
   // const path = useLocation().pathname;
   // const navigate = useNavigate();
+  
 
   return (
     <>

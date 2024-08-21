@@ -2,28 +2,14 @@ import { useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 import { getRandomIcon } from "../../utils/getRandomIcon";
 import { useLocation, useNavigate } from "react-router";
+import { request } from "../../utils/request";
+import { Form } from "react-router-dom";
 
-export function NavList({ title, items, customizable, setItem }) {
+export function NavList({ title, items, customizable }) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
   const [edit, setEdit] = useState(false);
-  const [titleInput, setTitle] = useState("");
-
-  const handleSubmit = (event) => {
-    if (event.key === "Enter") {
-      setItem((list) => [
-        ...list,
-        {
-          icon: <div className={`w-3 h-3 ${getRandomIcon()} rounded`} />,
-          title: titleInput,
-          sub: "",
-        },
-      ]);
-      setEdit(false);
-      setTitle("");
-    }
-  };
 
   return (
     <div className="mt-5">
@@ -42,25 +28,24 @@ export function NavList({ title, items, customizable, setItem }) {
         ))}
       </ul>
       {customizable && (
-        <div
-          className="m-1 p-2 flex items-center gap-2 hover:bg-slate-300 rounded"
-          onClick={() => setEdit(true)}
-        >
-          <IoMdAdd />
-          {edit ? (
+        <div onClick={() => setEdit(true)}>
+          <Form
+            method="POST"
+            className="m-1 p-2 flex items-center gap-2 hover:bg-slate-300 rounded"
+          >
+            <button
+              type="submit"
+              className=" bg-indigo-300 hover:bg-indigo-200 rounded"
+            >
+              <IoMdAdd />
+            </button>
             <input
-              id="search"
-              type="text"
-              placeholder="Add List"
-              value={titleInput}
-              onChange={(e) => setTitle(e.target.value)}
-              onKeyDown={handleSubmit}
-              onBlur={() => setEdit(false)}
               className="w-full p-1 px-2 rounded border border-slate-300 text-sm"
+              placeholder="Click + to add"
+              name="title"
+              onBlur={() => setEdit(false)}
             />
-          ) : (
-            <h4>Add New List</h4>
-          )}
+          </Form>
         </div>
       )}
     </div>

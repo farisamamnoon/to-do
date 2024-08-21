@@ -5,11 +5,19 @@ import Today from "../pages/today";
 import { StickyWall } from "../pages/sticky";
 import { ListPage } from "../pages/list";
 import { NewTask } from "../components/new-task";
+import { request as sendRequest } from "../utils/request";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <Dashboard />,
+    loader: async () => {
+      return await sendRequest("lists");
+    },
+    action: async ({ request }) => {
+      const data = Object.fromEntries(await request.formData());
+      return await sendRequest("lists", "POST", data);
+    },
     children: [
       {
         path: "/upcoming",
