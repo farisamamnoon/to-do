@@ -18,7 +18,6 @@ export const taskReducer = (state, action) => {
     case "check_subtask":
       const changed = JSON.parse(JSON.stringify(state));
       changed.subtasks[action.key].done = action.value;
-      console.log(state);
       return changed;
     default:
       return state;

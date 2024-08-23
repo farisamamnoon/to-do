@@ -1,25 +1,32 @@
 import { useEffect, useReducer, useState } from "react";
-import { IoMdAdd } from "react-icons/io";
+import { Form, useLoaderData, useLocation, useSubmit } from "react-router-dom";
 import { useNavigate, useParams } from "react-router";
-import { Form } from "react-router-dom";
-import { taskReducer } from "../utils/addTaskReducer";
-import { request } from "../utils/request";
 
-const LISTS = ["Personal", "Work", "Home"];
+import { IoMdAdd } from "react-icons/io";
+
+import { taskReducer } from "../utils/addTaskReducer";
+import { validateAddTask } from "../utils/validators/validateAddTask";
 
 export function NewTask() {
   const [subTaskInput, setSubTaskInput] = useState("");
+  const [errors, setErrors  ] = useState({});
   const [task, dispatch] = useReducer(taskReducer, {
-    title: "",
-    description: "",
-    list: "",
-    target_date: "",
+    title: null,
+    description: null,
+    list: null,
+    target_date: null,
     subtasks: [],
   });
-  const navigate = useNavigate();
+
+  const { data } = useLoaderData();
+
+  const { pathname } = useLocation();
   const { id } = useParams();
+  const navigate = useNavigate();
+  const submit = useSubmit();
 
   useEffect(() => {
+    //retreive data
     if (id) {
       const initState = {
         title: "Hai",
@@ -35,12 +42,17 @@ export function NewTask() {
     }
   }, [id]);
 
-  const handleSubmit = async () => {
-    try {
-      const response = await request("tasks", "POST", task);
-      console.log(response);
-    } catch (err) {
-      console.log(err);
+  const handleSubmit = () => {
+    const errors = validateAddTask(task);
+
+    if (Object.keys(errors).length === 0) {
+      submit(task, {
+        method: "POST",
+        action: `/${pathname.split("/").slice(0, 2).join("")}`,
+        encType: "application/json",
+      });
+    } else {
+
     }
   };
 
@@ -51,8 +63,11 @@ export function NewTask() {
 
   return (
     <>
-      {/* <div className="absolute inset-0 bg-slate-500 bg-opacity-35 w-full h-full" /> */}
-      <Form className="w-1/4 flex flex-col p-4 m-4 bg-slate-200 rounded-lg transition-transform duration-300 ease-in-out">
+      {/* < div className="absolute inset-0 bg-slate-500 bg-opacity-35 w-full h-full" /> */}
+      <Form
+        onSubmit={handleSubmit}
+        className="w-1/4 flex flex-col p-4 m-4 bg-slate-200 rounded-lg transition-transform duration-300 ease-in-out"
+      >
         <h2 className="py-2 text-xl font-semibold">Task:</h2>
 
         <input
@@ -86,8 +101,10 @@ export function NewTask() {
               dispatch({ type: "change_list", value: e.target.value })
             }
           >
-            {LISTS.map((list, index) => (
-              <option key={index}>{list}</option>
+            {data.map((list) => (
+              <option key={list.id} value={list.id}>
+                {list.title}
+              </option>
             ))}
           </select>
         </div>
@@ -151,7 +168,6 @@ export function NewTask() {
           <button
             type="submit"
             className="bg-primary hover:bg-teal-500 hover:text-black text-white py-2 px-4 rounded-lg font-semibold "
-            onClick={handleSubmit}
           >
             {id ? "Mark Done" : "Save"}
           </button>

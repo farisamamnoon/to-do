@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, redirect } from "react-router-dom";
 import { Dashboard } from "../pages";
 import { Upcoming } from "../pages/upcoming";
 import Today from "../pages/today";
@@ -16,12 +16,23 @@ export const router = createBrowserRouter([
     },
     action: async ({ request }) => {
       const data = Object.fromEntries(await request.formData());
-      return await sendRequest("lists", "POST", data);
+      const response = await sendRequest("lists", "POST", data);
+      if (response.success) {
+        return { success: true };
+      }
     },
     children: [
       {
         path: "/upcoming",
         element: <Upcoming />,
+        action: async ({ request }) => {
+          const data = await request.json();
+          const response = await sendRequest("tasks", "POST", data);
+          // if (response.success) {
+          //   return { success: true };
+          // }
+          return;
+        },
         children: [
           {
             path: ":id",
@@ -30,6 +41,7 @@ export const router = createBrowserRouter([
           {
             path: "add",
             element: <NewTask />,
+            loader: async () => sendRequest("lists"),
           },
         ],
       },

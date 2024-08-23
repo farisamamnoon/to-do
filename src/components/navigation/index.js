@@ -6,7 +6,6 @@ import { MdKeyboardDoubleArrowRight } from "react-icons/md";
 import { MdOutlineToday } from "react-icons/md";
 import { FaRegNoteSticky } from "react-icons/fa6";
 import { useState, useEffect } from "react";
-import { request } from "../../utils/request";
 import { useLoaderData } from "react-router-dom";
 
 export function Navigation() {
@@ -15,21 +14,24 @@ export function Navigation() {
 
   useEffect(() => {
     setListNavItems(loaderData.data);
-  }, []);
+  }, [loaderData]);
 
   const taskNavItems = [
     {
-      icon: <MdKeyboardDoubleArrowRight />,
+      id: 1,
+      icon: <MdKeyboardDoubleArrowRight key={1}/>,
       title: "upcoming",
       sub: "4",
     },
     {
-      icon: <MdOutlineToday />,
+      id: 2,
+      icon: <MdOutlineToday key={2}/>,
       title: "today",
       sub: "7",
     },
     {
-      icon: <FaRegNoteSticky />,
+      id: 3,
+      icon: <FaRegNoteSticky key={3}/>,
       title: "sticky",
       sub: "",
     },
